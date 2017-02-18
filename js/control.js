@@ -2,12 +2,12 @@
 var autoplay = function() {
     function getScripts(urls, callback) {
         var numDone = 0;
-        
+
         function getScript(url, callback) {
             var script = document.createElement('script'),
                     head = document.getElementsByTagName('head')[0],
                     done = false;
-            
+
                 script.src = url;
                 script.onload = script.onreadystatechange = function() {
                     if (!done && (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) {
@@ -17,32 +17,32 @@ var autoplay = function() {
                         head.removeChild(script);
                     }
                 };
-            
+
             head.appendChild(script);
         }
-        
+
         function getScriptCallback() {
             if (urls.length > 0) getScript(urls.shift(), getScriptCallback);
             else callback();
         }
-        
+
         getScript(urls.shift(), getScriptCallback);
     }
-    
+
     getScripts([
         '/js/compatibility.js',
         '/js/objectdetect.js',
         '/js/objectdetect.handfist.js'],
-    
+
         function() {
             var canvas = $('<canvas style="position: fixed; z-index: 1001;top: 10px; right: 10px; opacity: 0.9">').get(0),
                 context = canvas.getContext('2d'),
                 video = document.createElement('video'),
                 fist_pos_old,
                 detector;
-            
+
             document.getElementsByTagName('body')[0].appendChild(canvas);
-            
+
             try {
                 compatibility.getUserMedia({video: true}, function(stream) {
                     try {
@@ -57,49 +57,56 @@ var autoplay = function() {
             } catch (error) {
                 alert(error);
             }
-            
+
             function play() {
                 compatibility.requestAnimationFrame(play);
                 if (video.paused) video.play();
-                
+
                 if (video.readyState === video.HAVE_ENOUGH_DATA && video.videoWidth > 0) {
-                    
+
                     /* Prepare the detector once the video dimensions are known: */
                     if (!detector) {
                         var width = ~~(80 * video.videoWidth / video.videoHeight);
                         var height = 80;
                         detector = new objectdetect.detector(width, height, 1.1, objectdetect.handfist);
                     }
-                
+
                     /* Draw video overlay: */
                     canvas.width = ~~(100 * video.videoWidth / video.videoHeight);
                     canvas.height = 100;
                     context.drawImage(video, 0, 0, canvas.clientWidth, canvas.clientHeight);
-                    
+
                     var coords = detector.detect(video, 1);
                     if (coords[0]) {
                         var coord = coords[0];
-                        
+
                         /* Rescale coordinates from detector to video coordinate space: */
                         coord[0] *= video.videoWidth / detector.canvas.width;
                         coord[1] *= video.videoHeight / detector.canvas.height;
                         coord[2] *= video.videoWidth / detector.canvas.width;
                         coord[3] *= video.videoHeight / detector.canvas.height;
-                    
+
                         /* Find coordinates with maximum confidence: */
                         var coord = coords[0];
                         for (var i = coords.length - 1; i >= 0; --i)
                             if (coords[i][4] > coord[4]) coord = coords[i];
-                        
+
                         /* Scroll window: */
                         var fist_pos = [coord[0] + coord[2] / 2, coord[1] + coord[3] / 2];
                         if (fist_pos_old) {
                             var dx = (fist_pos[0] - fist_pos_old[0]) / video.videoWidth,
                                     dy = (fist_pos[1] - fist_pos_old[1]) / video.videoHeight;
-                            console.log(dx);
+                            var ele = $("#mainImage")[0];
+                            if (ele) {
+                                swipe(dx, ele);
+                            }
+                            if ($(".thumb.active").hasClass("scroll")) {
                                 window.scrollBy(dx * 200, dy * 200);
+                            }
+
+                            // console.log($("#mainImage")[0].getBoundingClientRect());
                         } else fist_pos_old = fist_pos;
-                        
+
                         /* Draw coordinates on video overlay: */
                         context.beginPath();
                         context.lineWidth = '2';
@@ -118,3 +125,30 @@ var autoplay = function() {
 };
 // document.getElementById('link').href = 'javascript:(' + autoplay.toString() + ')()';
 autoplay();
+
+function swipe(dx, ele) {
+    var dimensions = ele.getBoundingClientRect();
+    if (dimensions.top >= 0 && dimensions.bottom >=0) {
+        if (dx < -0.15) {
+            // console.log($('.thumb.active').closest('div').next('div').find('.thumb'));
+            console.log("next");
+            if (flag) {
+                $('.thumb.active').closest('div').next('div').find('.thumb').click();
+                $('.thumb.active').addClass("swipe");
+                flag = false;
+            }
+        }
+        if (dx > 0.15) {
+            console.log("prev");
+            if (flag) {
+                $('.thumb.active').closest('div').prev('div').find('.thumb').click();
+                $('.thumb.active').addClass("swipe");
+
+                flag = false;
+            }
+        }
+        if (dx == 0) {
+            flag = true;
+        }
+    }
+}

@@ -49,20 +49,20 @@ function demo() {
 
 function productDetailGallery(confDetailSwitch) {
     $('.thumb:first').addClass('active');
-    timer = setInterval(autoSwitch, confDetailSwitch);
+    // timer = setInterval(autoSwitch, confDetailSwitch);
     $(".thumb").click(function(e) {
-
+        console.log($(this));
 	switchImage($(this));
-	clearInterval(timer);
-	timer = setInterval(autoSwitch, confDetailSwitch);
+	// clearInterval(timer);
+	// timer = setInterval(autoSwitch, confDetailSwitch);
 	e.preventDefault();
     }
     );
-    $('#mainImage').hover(function() {
-	clearInterval(timer);
+    /*$('#mainImage').hover(function() {
+	// clearInterval(timer);
     }, function() {
-	timer = setInterval(autoSwitch, confDetailSwitch);
-    });
+	// timer = setInterval(autoSwitch, confDetailSwitch);
+    });*/
 
     function autoSwitch() {
 	var nextThumb = $('.thumb.active').closest('div').next('div').find('.thumb');
