@@ -98,7 +98,7 @@ var autoplay = function() {
                                     dy = (fist_pos[1] - fist_pos_old[1]) / video.videoHeight;
                             var ele = $("#mainImage")[0];
                             if (ele) {
-                                swipe(dx, ele);
+                                swipe(dx, ele, dy);
                             }
                             if ($(".thumb.active").hasClass("scroll")) {
                                 window.scrollBy(dx * 200, dy * 200);
@@ -126,7 +126,7 @@ var autoplay = function() {
 // document.getElementById('link').href = 'javascript:(' + autoplay.toString() + ')()';
 autoplay();
 
-function swipe(dx, ele) {
+function swipe(dx, ele, dy) {
     var dimensions = ele.getBoundingClientRect();
     if (dimensions.top >= 0 && dimensions.bottom >=0) {
         if (dx < -0.15) {
@@ -134,7 +134,7 @@ function swipe(dx, ele) {
             console.log("next");
             if (flag) {
                 $('.thumb.active').closest('div').next('div').find('.thumb').click();
-                $('.thumb.active').addClass("swipe");
+                $('.thumb.active').addClass("swipe").removeClass("scroll");
                 flag = false;
             }
         }
@@ -142,13 +142,16 @@ function swipe(dx, ele) {
             console.log("prev");
             if (flag) {
                 $('.thumb.active').closest('div').prev('div').find('.thumb').click();
-                $('.thumb.active').addClass("swipe");
+                $('.thumb.active').addClass("swipe").removeClass("scroll");
 
                 flag = false;
             }
         }
         if (dx == 0) {
             flag = true;
+        }
+        if (dy > 0.3 || dy < -0.3) {
+            $('.thumb.active').addClass("scroll").removeClass("swipe");
         }
     }
 }
