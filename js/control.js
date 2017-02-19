@@ -93,12 +93,14 @@ var autoplay = function () {
                                     if (flag) {
                                         $('.thumb.active').closest('div').next('div').find('.thumb').click();
                                         $('body').addClass("swipe").removeClass("scroll");
+                                        showGesture("next");
                                         flag = false;
                                     }
                                 }, function () {
                                     if (flag) {
                                         $('.thumb.active').closest('div').prev('div').find('.thumb').click();
                                         $('body').addClass("swipe").removeClass("scroll");
+                                        showGesture("prev");
                                         flag = false;
                                     }
                                 }, function () {
@@ -194,12 +196,11 @@ function showGesture(gesture) {
     console.log(gesture);
     if (gesture === "prev") {
         $("#gestureDiv img").css("transform", "rotate(180deg)");
+    } else {
+        $("#gestureDiv img").css("transform", "rotate(0deg)");
     }
     $("#gestureDiv").fadeToggle();
     setTimeout(function () {
         $("#gestureDiv").fadeToggle("slow");
     }, 200);
-    setTimeout(function () {
-        $("#gestureDiv img").css("transform", "rotate(0deg)");
-    }, 2000);
 }
