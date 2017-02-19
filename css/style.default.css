@@ -236,7 +236,7 @@ h1 {
 }
 .box.slideshow .owl-controls .owl-buttons,
 #main-slider .owl-controls .owl-buttons {
-  /*display: none;*/
+  display: none;
 }
 .box.slideshow .owl-controls .owl-page.active span,
 #main-slider .owl-controls .owl-page.active span,

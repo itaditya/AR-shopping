@@ -110,6 +110,7 @@ var autoplay = function () {
                             }
                             if ($(elem).hasClass("swipe-carousel")) {
                                 var carousel = $(elem).owlCarousel();
+                                var flag = true;
                                 swiper(dx, dy, elem, function () {
                                     if (flag) {
                                         $(elem).addClass("swipe").removeClass("scroll");
