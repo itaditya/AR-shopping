@@ -38,7 +38,6 @@ function productDetailGallery(confDetailSwitch) {
     $('.thumb:first').addClass('active');
     // timer = setInterval(autoSwitch, confDetailSwitch);
     $(".thumb").click(function (e) {
-        console.log($(this));
         switchImage($(this));
         // clearInterval(timer);
         // timer = setInterval(autoSwitch, confDetailSwitch);
