@@ -25,12 +25,14 @@ var autoplay = function () {
         getScript(urls.shift(), getScriptCallback);
     }
     getScripts(['/js/compatibility.js', '/js/objectdetect.js', '/js/objectdetect.handfist.js'], function () {
-        var canvas = $('<canvas style="position: fixed; z-index: 1001;top: 10px; right: 10px;transform: scale(-1, 1); opacity: 0.9">').get(0),
+        var canvas = $('<canvas style="position: fixed; z-index: 1001;top: 10px; right: 10px;transform: scale(-1, 1); opacity: 0.8">').get(0),
             context = canvas.getContext('2d'),
             video = document.createElement('video'),
             fist_pos_old,
             detector;
         document.getElementsByTagName('body')[0].appendChild(canvas);
+        var gestureHtml = '<div style="position: fixed; z-index: 1001;bottom: 10px; right: 10px; opacity: 0.9;width:100px;height:100px;background: #fff;border: solid 1px #e6e6e6;" id="gestureDiv">A</div>';
+        $('body')[0].appendChild($(gestureHtml).get(0));
         try {
             compatibility.getUserMedia({
                 video: true
@@ -81,7 +83,6 @@ var autoplay = function () {
                             dy = (fist_pos[1] - fist_pos_old[1]) / video.videoHeight;
                         var ele = $("#mainImage")[0];
                         var swiperElem = $(".swiper");
-
                         $.each(swiperElem, function (key, elem) {
                             // console.log(elem);
                             // console.log($(elem).hasClass("swipe-product"));
@@ -105,7 +106,7 @@ var autoplay = function () {
                                     $('body').addClass("scroll").removeClass("swipe");
                                 });
                                 if ($("body").hasClass("scroll")) {
-                                    window.scrollBy(dx * 200, dy * 200);
+                                    scroll(dx, dy);
                                 }
                             }
                             if ($(elem).hasClass("swipe-carousel")) {
@@ -131,17 +132,15 @@ var autoplay = function () {
                                     dy = 0.02;
                                 });
                                 if ($("body").hasClass("scroll")) {
-                                    window.scrollBy(dx * 200, dy * 200);
+                                    scroll(dx, dy);
                                 }
                             }
                         })
-                        if(swiperElem.length === 0){
+                        if (swiperElem.length === 0) {
                             // console.log('test');
-                            window.scrollBy(dx * 200, dy * 200);
+                            scroll(dx, dy);
                         }
-                        // console.log($("#mainImage")[0].getBoundingClientRect());
                     } else fist_pos_old = fist_pos;
-                    /* Draw coordinates on video overlay: */
                     context.beginPath();
                     context.lineWidth = '2';
                     context.fillStyle = 'rgba(0, 255, 255, 0.5)';
@@ -152,36 +151,7 @@ var autoplay = function () {
         }
     });
 };
-// document.getElementById('link').href = 'javascript:(' + autoplay.toString() + ')()';
 autoplay();
-
-function swipe(dx, dy, ele) {
-    var dimensions = ele.getBoundingClientRect();
-    if (dimensions.top >= 0 && dimensions.bottom >= 0) {
-        if (dx < -0.15) {
-            // console.log("next");
-            if (flag) {
-                $('.thumb.active').closest('div').next('div').find('.thumb').click();
-                $('.thumb.active').addClass("swipe").removeClass("scroll");
-                flag = false;
-            }
-        }
-        if (dx > 0.15) {
-            // console.log("prev");
-            if (flag) {
-                $('.thumb.active').closest('div').prev('div').find('.thumb').click();
-                $('.thumb.active').addClass("swipe").removeClass("scroll");
-                flag = false;
-            }
-        }
-        if (dx == 0) {
-            flag = true;
-        }
-        if (dy > 0.2 || dy < -0.2) {
-            $('.thumb.active').addClass("scroll").removeClass("swipe");
-        }
-    }
-}
 
 function swiper(dx, dy, ele, next, prev, stay, prevent) {
     if (isVisible(ele)) {
@@ -208,4 +178,16 @@ function isVisible(ele) {
         return true;
     }
     return false;
+}
+
+function scroll(dx, dy) {
+    window.scrollBy(dx * 200, dy * 200);
+    showGesture("scroll");
+}
+
+function showGesture(gesture) {
+    console.log(gesture);
+    console.log($("#gestureDiv"));
+    setTimeout(function(){
+    },100);
 }
