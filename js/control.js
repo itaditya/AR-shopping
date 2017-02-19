@@ -25,13 +25,17 @@ var autoplay = function () {
         getScript(urls.shift(), getScriptCallback);
     }
     getScripts(['/js/compatibility.js', '/js/objectdetect.js', '/js/objectdetect.handfist.js'], function () {
-        var canvas = $('<canvas style="position: fixed; z-index: 1001;top: 10px; right: 10px;transform: scale(-1, 1); opacity: 0.8">').get(0),
+        var canvas = $('<canvas style="position: fixed; z-index: 2001;top: 10px; right: 32px;transform: scale(-1, 1); opacity: 0.8">').get(0),
             context = canvas.getContext('2d'),
             video = document.createElement('video'),
             fist_pos_old,
-            angle = [0, 0],
-            smoother = new Smoother([0.9995, 0.9995], [0, 0], 0),
+            angle = [],
+            smoother,
             detector;
+        if ($(".3d").length > 0) {
+           angle = [0, 0];
+            smoother = new Smoother([0.9995, 0.9995], [0, 0], 0);
+        }
         document.getElementsByTagName('body')[0].appendChild(canvas);
         var gestureHtml = '<div id="gestureDiv"><img class="img-responsive" src="/img/right.gif"></div>';
         $('body')[0].appendChild($(gestureHtml).get(0));
@@ -64,8 +68,9 @@ var autoplay = function () {
                     var height = 80;
                     detector = new objectdetect.detector(width, height, 1.1, objectdetect.handfist);
                 }
+                if ($(".3d").length > 0) {
                 angle = smoother.smooth(angle);
-                if ($(".3d")) {
+
                     document.getElementById('transform_a').setAttribute('rotation', '0 1 0 ' + angle[0]);
                     document.getElementById('transform_b').setAttribute('rotation', '1 0 0 ' + angle[1]);
                 }
