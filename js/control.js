@@ -25,7 +25,7 @@ var autoplay = function () {
         getScript(urls.shift(), getScriptCallback);
     }
     getScripts(['/js/compatibility.js', '/js/objectdetect.js', '/js/objectdetect.handfist.js'], function () {
-        var canvas = $('<canvas style="position: fixed; z-index: 1001;top: 10px; right: 10px; opacity: 0.9">').get(0),
+        var canvas = $('<canvas style="position: fixed; z-index: 1001;top: 10px; right: 10px;transform: scale(-1, 1); opacity: 0.9">').get(0),
             context = canvas.getContext('2d'),
             video = document.createElement('video'),
             fist_pos_old,
@@ -80,14 +80,59 @@ var autoplay = function () {
                         var dx = (fist_pos[0] - fist_pos_old[0]) / video.videoWidth,
                             dy = (fist_pos[1] - fist_pos_old[1]) / video.videoHeight;
                         var ele = $("#mainImage")[0];
-                        var a = function(){}
-                        if (ele) {
-                            swipe(dx, ele);
-                            // swiper(dx, ele,a,a,a);
-                        }
-                        if ($(".thumb.active").hasClass("scroll")) {
-                            window.scrollBy(dx * 200, dy * 200);
-                        }
+                        var swiperElem = $(".swiper");
+                        $.each(swiperElem, function (key, elem) {
+                            // console.log(elem);
+                            // console.log($(elem).hasClass("swipe-product"));
+                            $(elem).addClass("scroll");
+                            if ($(elem).hasClass("swipe-product")) {
+                                // swipe(dx, dy, ele);
+                                swiper(dx, dy, elem, function () {
+                                    if (flag) {
+                                        $('.thumb.active').closest('div').next('div').find('.thumb').click();
+                                        $('.thumb.active').addClass("swipe").removeClass("scroll");
+                                        flag = false;
+                                    }
+                                }, function () {
+                                    if (flag) {
+                                        $('.thumb.active').closest('div').prev('div').find('.thumb').click();
+                                        $('.thumb.active').addClass("swipe").removeClass("scroll");
+                                        flag = false;
+                                    }
+                                }, function () {
+                                    flag = true;
+                                }, function () {
+                                    $('.thumb.active').addClass("scroll").removeClass("swipe");
+                                });
+                                if ($(".thumb.active").hasClass("scroll")) {
+                                    window.scrollBy(dx * 200, dy * 200);
+                                }
+                            }
+                            if ($(elem).hasClass("swipe-carousel")) {
+                                var carousel = $(elem).owlCarousel();
+                                swiper(dx, dy, elem, function () {
+                                    if (flag) {
+                                        $(elem).addClass("swipe").removeClass("scroll");
+                                        carousel.trigger('owl.next');
+                                        flag = false;
+                                    }
+                                }, function () {
+                                    if (flag) {
+                                        // $(elem).find(".owl-prev").trigger("click");                      
+                                        $(elem).addClass("swipe").removeClass("scroll");
+                                        carousel.trigger('owl.prev');
+                                        flag = false;
+                                    }
+                                }, function () {
+                                    flag = true;
+                                }, function () {
+                                    $(elem).addClass("scroll").removeClass("swipe");
+                                });
+                                if ($(elem).hasClass("scroll")) {
+                                    window.scrollBy(dx * 200, dy * 200);
+                                }
+                            }
+                        })
                         // console.log($("#mainImage")[0].getBoundingClientRect());
                     } else fist_pos_old = fist_pos;
                     /* Draw coordinates on video overlay: */
@@ -104,53 +149,56 @@ var autoplay = function () {
 // document.getElementById('link').href = 'javascript:(' + autoplay.toString() + ')()';
 autoplay();
 
-function swipe(dx, ele) {
+function swipe(dx, dy, ele) {
     var dimensions = ele.getBoundingClientRect();
     if (dimensions.top >= 0 && dimensions.bottom >= 0) {
         if (dx < -0.15) {
-            // console.log($('.thumb.active').closest('div').next('div').find('.thumb'));
-            console.log("next");
+            // console.log("next");
             if (flag) {
                 $('.thumb.active').closest('div').next('div').find('.thumb').click();
-                $('.thumb.active').addClass("swipe");
+                $('.thumb.active').addClass("swipe").removeClass("scroll");
                 flag = false;
             }
         }
         if (dx > 0.15) {
-            console.log("prev");
+            // console.log("prev");
             if (flag) {
                 $('.thumb.active').closest('div').prev('div').find('.thumb').click();
-                $('.thumb.active').addClass("swipe");
+                $('.thumb.active').addClass("swipe").removeClass("scroll");
                 flag = false;
             }
         }
         if (dx == 0) {
             flag = true;
         }
+        if (dy > 0.3 || dy < -0.3) {
+            $('.thumb.active').addClass("scroll").removeClass("swipe");
+        }
     }
 }
 
-function swiper(dx, ele, next, prev, stay) {
+function swiper(dx, dy, ele, next, prev, stay, prevent) {
     if (isVisible(ele)) {
         if (dx < -0.15) {
-           next();
-           console.log("next");
+            next();
+            // console.log("next");
         }
         if (dx > 0.15) {
             prev();
-            console.log("prev");
+            // console.log("prev");
         }
         if (dx == 0) {
             stay();
         }
-    }else{
-        console.log('invisible');
+        if (dy > 0.3 || dy < -0.3) {
+            prevent();
+        }
     }
 }
 
 function isVisible(ele) {
     var coords = ele.getBoundingClientRect();
-    if (coords.top >= 0 && coords.bottom >= 0) {
+    if (coords.top >= -50 && coords.bottom >= -50) {
         return true;
     }
     return false;
