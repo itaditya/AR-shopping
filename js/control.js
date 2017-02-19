@@ -81,7 +81,6 @@ var autoplay = function () {
                             dy = (fist_pos[1] - fist_pos_old[1]) / video.videoHeight;
                         var ele = $("#mainImage")[0];
                         var swiperElem = $(".swiper");
-
                         $.each(swiperElem, function (key, elem) {
                             // console.log(elem);
                             // console.log($(elem).hasClass("swipe-product"));
@@ -129,6 +128,9 @@ var autoplay = function () {
                                 }, function () {
                                     $("body").addClass("scroll").removeClass("swipe");
                                     dy = 0.02;
+                                    if (dy < 0) {
+                                        dy = -0.02;
+                                    }
                                 });
                                 if ($("body").hasClass("scroll")) {
                                     window.scrollBy(dx * 200, dy * 200);
@@ -158,7 +160,7 @@ function swipe(dx, dy, ele) {
             // console.log("next");
             if (flag) {
                 $('.thumb.active').closest('div').next('div').find('.thumb').click();
-                $('.thumb.active').addClass("swipe").removeClass("scroll");
+                $('body').addClass("swipe").removeClass("scroll");
                 flag = false;
             }
         }
@@ -166,15 +168,15 @@ function swipe(dx, dy, ele) {
             // console.log("prev");
             if (flag) {
                 $('.thumb.active').closest('div').prev('div').find('.thumb').click();
-                $('.thumb.active').addClass("swipe").removeClass("scroll");
+                $('body').addClass("swipe").removeClass("scroll");
                 flag = false;
             }
         }
         if (dx == 0) {
             flag = true;
         }
-        if (dy > 0.2 || dy < -0.2) {
-            $('.thumb.active').addClass("scroll").removeClass("swipe");
+        if ($('body').hasClass('swipe') && (dy > 0.2 || dy < -0.2)) {
+            $('body').addClass("scroll").removeClass("swipe");
         }
     }
 }
@@ -192,7 +194,7 @@ function swiper(dx, dy, ele, next, prev, stay, prevent) {
         if (dx == 0) {
             stay();
         }
-        if (dy > 0.2 || dy < -0.2) {
+        if ($('body').hasClass('swipe') && (dy > 0.2 || dy < -0.2)) {
             prevent();
         }
     }
