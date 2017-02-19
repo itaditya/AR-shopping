@@ -25,12 +25,15 @@ var autoplay = function () {
         getScript(urls.shift(), getScriptCallback);
     }
     getScripts(['/js/compatibility.js', '/js/objectdetect.js', '/js/objectdetect.handfist.js'], function () {
-        var canvas = $('<canvas style="position: fixed; z-index: 1001;top: 10px; right: 10px;transform: scale(-1, 1); opacity: 0.9">').get(0),
+        var canvas = $('<canvas style="position: fixed; z-index: 1001;top: 10px; right: 10px;transform: scale(-1, 1); opacity: 0.8">').get(0),
             context = canvas.getContext('2d'),
             video = document.createElement('video'),
             fist_pos_old,
             detector;
         document.getElementsByTagName('body')[0].appendChild(canvas);
+        var gestureHtml = '<div id="gestureDiv"><img class="img-responsive" src="/img/right.gif"></div>';
+        $('body')[0].appendChild($(gestureHtml).get(0));
+        $("#gestureDiv").hide();
         try {
             compatibility.getUserMedia({
                 video: true
@@ -110,7 +113,7 @@ var autoplay = function () {
                                     $('body').addClass("scroll").removeClass("swipe");
                                 });
                                 if ($("body").hasClass("scroll")) {
-                                    window.scrollBy(dx * 200, dy * 200);
+                                    scroll(dx, dy);
                                 }
                             }
                             if ($(elem).hasClass("swipe-carousel")) {
@@ -120,6 +123,7 @@ var autoplay = function () {
                                     if (flag) {
                                         $("body").addClass("swipe").removeClass("scroll");
                                         carousel.trigger('owl.next');
+                                        showGesture("next");
                                         flag = false;
                                     }
                                 }, function () {
@@ -127,6 +131,7 @@ var autoplay = function () {
                                         // $("body").find(".owl-prev").trigger("click");
                                         $("body").addClass("swipe").removeClass("scroll");
                                         carousel.trigger('owl.prev');
+                                        showGesture("prev");
                                         flag = false;
                                     }
                                 }, function () {
@@ -139,13 +144,15 @@ var autoplay = function () {
                                     }
                                 });
                                 if ($("body").hasClass("scroll")) {
-                                    window.scrollBy(dx * 200, dy * 200);
+                                    scroll(dx, dy);
                                 }
                             }
                         })
-                        // console.log($("#mainImage")[0].getBoundingClientRect());
+                        if (swiperElem.length === 0) {
+                            // console.log('test');
+                            scroll(dx, dy);
+                        }
                     } else fist_pos_old = fist_pos;
-                    /* Draw coordinates on video overlay: */
                     context.beginPath();
                     context.lineWidth = '2';
                     context.fillStyle = 'rgba(0, 255, 255, 0.5)';
@@ -156,36 +163,7 @@ var autoplay = function () {
         }
     });
 };
-// document.getElementById('link').href = 'javascript:(' + autoplay.toString() + ')()';
 autoplay();
-
-function swipe(dx, dy, ele) {
-    var dimensions = ele.getBoundingClientRect();
-    if (dimensions.top >= 0 && dimensions.bottom >= 0) {
-        if (dx < -0.15) {
-            // console.log("next");
-            if (flag) {
-                $('.thumb.active').closest('div').next('div').find('.thumb').click();
-                $('body').addClass("swipe").removeClass("scroll");
-                flag = false;
-            }
-        }
-        if (dx > 0.15) {
-            // console.log("prev");
-            if (flag) {
-                $('.thumb.active').closest('div').prev('div').find('.thumb').click();
-                $('body').addClass("swipe").removeClass("scroll");
-                flag = false;
-            }
-        }
-        if (dx == 0) {
-            flag = true;
-        }
-        if ($('body').hasClass('swipe') && (dy > 0.2 || dy < -0.2)) {
-            $('body').addClass("scroll").removeClass("swipe");
-        }
-    }
-}
 
 function swiper(dx, dy, ele, next, prev, stay, prevent) {
     if (isVisible(ele)) {
@@ -213,6 +191,7 @@ function isVisible(ele) {
     }
     return false;
 }
+
 
 function rotateplay() {
             compatibility.requestAnimationFrame(rotateplay);
@@ -277,3 +256,22 @@ function rotateplay() {
                 } else fist_pos_old = null;
             }
         }
+
+function scroll(dx, dy) {
+    window.scrollBy(dx * 200, dy * 200);
+}
+
+function showGesture(gesture) {
+    console.log(gesture);
+    if (gesture === "prev") {
+        $("#gestureDiv img").css("transform", "rotate(180deg)");
+    }
+    $("#gestureDiv").fadeToggle();
+    setTimeout(function () {
+        $("#gestureDiv").fadeToggle("slow");
+    }, 200);
+    setTimeout(function () {
+        $("#gestureDiv img").css("transform", "rotate(0deg)");
+    }, 2000);
+}
+
