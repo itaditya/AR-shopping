@@ -1106,7 +1106,10 @@
                 <script type="text/javascript">
                     $("#myModal").on('shown.bs.modal', function () {
                         $("body").addClass("disable-scroll");
-                    });                              
+                    }); 
+                    $("#myModal").on('hidden.bs.modal', function () {
+                        $("body").removeClass("disable-scroll");
+                    });                             
                 </script>
             </body>
         </html>
