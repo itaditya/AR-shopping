@@ -31,8 +31,9 @@ var autoplay = function () {
             fist_pos_old,
             detector;
         document.getElementsByTagName('body')[0].appendChild(canvas);
-        var gestureHtml = '<div style="position: fixed; z-index: 1001;bottom: 10px; right: 10px; opacity: 0.9;width:100px;height:100px;background: #fff;border: solid 1px #e6e6e6;" id="gestureDiv">A</div>';
+        var gestureHtml = '<div id="gestureDiv"><img class="img-responsive" src="/img/right.gif"></div>';
         $('body')[0].appendChild($(gestureHtml).get(0));
+        $("#gestureDiv").hide();
         try {
             compatibility.getUserMedia({
                 video: true
@@ -116,6 +117,7 @@ var autoplay = function () {
                                     if (flag) {
                                         $("body").addClass("swipe").removeClass("scroll");
                                         carousel.trigger('owl.next');
+                                        showGesture("next");
                                         flag = false;
                                     }
                                 }, function () {
@@ -123,6 +125,7 @@ var autoplay = function () {
                                         // $("body").find(".owl-prev").trigger("click");
                                         $("body").addClass("swipe").removeClass("scroll");
                                         carousel.trigger('owl.prev');
+                                        showGesture("prev");
                                         flag = false;
                                     }
                                 }, function () {
@@ -130,6 +133,9 @@ var autoplay = function () {
                                 }, function () {
                                     $("body").addClass("scroll").removeClass("swipe");
                                     dy = 0.02;
+                                    if (dy < 0) {
+                                        dy = -0.02;
+                                    }
                                 });
                                 if ($("body").hasClass("scroll")) {
                                     scroll(dx, dy);
@@ -166,7 +172,7 @@ function swiper(dx, dy, ele, next, prev, stay, prevent) {
         if (dx == 0) {
             stay();
         }
-        if (dy > 0.2 || dy < -0.2) {
+        if ($('body').hasClass('swipe') && (dy > 0.2 || dy < -0.2)) {
             prevent();
         }
     }
@@ -182,12 +188,18 @@ function isVisible(ele) {
 
 function scroll(dx, dy) {
     window.scrollBy(dx * 200, dy * 200);
-    showGesture("scroll");
 }
 
 function showGesture(gesture) {
     console.log(gesture);
-    console.log($("#gestureDiv"));
-    setTimeout(function(){
-    },100);
+    if (gesture === "prev") {
+        $("#gestureDiv img").css("transform", "rotate(180deg)");
+    }
+    $("#gestureDiv").fadeToggle();
+    setTimeout(function () {
+        $("#gestureDiv").fadeToggle("slow");
+    }, 200);
+    setTimeout(function () {
+        $("#gestureDiv img").css("transform", "rotate(0deg)");
+    }, 2000);
 }

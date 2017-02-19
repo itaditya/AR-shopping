@@ -188,3 +188,7 @@ $.fn.alignElementsSameHeight = function () {
         children.innerHeight(maxHeight);
     });
 }
+
+$(window).on('mousewheel', function() {
+ $("body").addClass("scroll").removeClass("swipe");
+});
