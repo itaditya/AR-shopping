@@ -81,55 +81,56 @@ var autoplay = function () {
                             dy = (fist_pos[1] - fist_pos_old[1]) / video.videoHeight;
                         var ele = $("#mainImage")[0];
                         var swiperElem = $(".swiper");
+
                         $.each(swiperElem, function (key, elem) {
                             // console.log(elem);
                             // console.log($(elem).hasClass("swipe-product"));
-                            $(elem).addClass("scroll");
                             if ($(elem).hasClass("swipe-product")) {
                                 // swipe(dx, dy, ele);
                                 swiper(dx, dy, elem, function () {
                                     if (flag) {
                                         $('.thumb.active').closest('div').next('div').find('.thumb').click();
-                                        $('.thumb.active').addClass("swipe").removeClass("scroll");
+                                        $('body').addClass("swipe").removeClass("scroll");
                                         flag = false;
                                     }
                                 }, function () {
                                     if (flag) {
                                         $('.thumb.active').closest('div').prev('div').find('.thumb').click();
-                                        $('.thumb.active').addClass("swipe").removeClass("scroll");
+                                        $('body').addClass("swipe").removeClass("scroll");
                                         flag = false;
                                     }
                                 }, function () {
                                     flag = true;
                                 }, function () {
-                                    $('.thumb.active').addClass("scroll").removeClass("swipe");
+                                    $('body').addClass("scroll").removeClass("swipe");
                                 });
-                                if ($(".thumb.active").hasClass("scroll")) {
+                                if ($("body").hasClass("scroll")) {
                                     window.scrollBy(dx * 200, dy * 200);
                                 }
                             }
                             if ($(elem).hasClass("swipe-carousel")) {
                                 var carousel = $(elem).owlCarousel();
-                                var flag = true;
+                                // var flag = true;
                                 swiper(dx, dy, elem, function () {
                                     if (flag) {
-                                        $(elem).addClass("swipe").removeClass("scroll");
+                                        $("body").addClass("swipe").removeClass("scroll");
                                         carousel.trigger('owl.next');
                                         flag = false;
                                     }
                                 }, function () {
                                     if (flag) {
-                                        // $(elem).find(".owl-prev").trigger("click");                      
-                                        $(elem).addClass("swipe").removeClass("scroll");
+                                        // $("body").find(".owl-prev").trigger("click");
+                                        $("body").addClass("swipe").removeClass("scroll");
                                         carousel.trigger('owl.prev');
                                         flag = false;
                                     }
                                 }, function () {
                                     flag = true;
                                 }, function () {
-                                    $(elem).addClass("scroll").removeClass("swipe");
+                                    $("body").addClass("scroll").removeClass("swipe");
+                                    dy = 0.02;
                                 });
-                                if ($(elem).hasClass("scroll")) {
+                                if ($("body").hasClass("scroll")) {
                                     window.scrollBy(dx * 200, dy * 200);
                                 }
                             }
@@ -172,7 +173,7 @@ function swipe(dx, dy, ele) {
         if (dx == 0) {
             flag = true;
         }
-        if (dy > 0.3 || dy < -0.3) {
+        if (dy > 0.2 || dy < -0.2) {
             $('.thumb.active').addClass("scroll").removeClass("swipe");
         }
     }
@@ -191,7 +192,7 @@ function swiper(dx, dy, ele, next, prev, stay, prevent) {
         if (dx == 0) {
             stay();
         }
-        if (dy > 0.3 || dy < -0.3) {
+        if (dy > 0.2 || dy < -0.2) {
             prevent();
         }
     }
