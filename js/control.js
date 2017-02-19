@@ -134,6 +134,10 @@ var autoplay = function () {
                                 }
                             }
                         })
+                        if(swiperElem.length === 0){
+                            // console.log('test');
+                            window.scrollBy(dx * 200, dy * 200);
+                        }
                         // console.log($("#mainImage")[0].getBoundingClientRect());
                     } else fist_pos_old = fist_pos;
                     /* Draw coordinates on video overlay: */
